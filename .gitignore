@@ -1,0 +1,29 @@
+# Node
+node_modules/
+dist/
+build/
+.npm
+.yarn
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+.env
+.venv
+*.egg-info/
+
+# Ignore local config
+.env.local
+.env.development
+.env.test
+.env.production
+
+# IDEs and OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+*.swp
+*.log

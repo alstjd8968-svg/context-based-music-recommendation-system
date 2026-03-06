@@ -1,0 +1,67 @@
+version: '3.8'
+
+services:
+  # 1. Frontend (React / Vue / Next.js 등)
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    environment:
+      - REACT_APP_API_URL=http://localhost:8080
+    restart: always
+
+  # 2. Backend (Spring Boot / FastAPI / Node.js 등)
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      - DATABASE_URL=postgres://user:password@db:5432/music_db
+      - REDIS_URL=redis://redis:6379
+    depends_on:
+      - db
+      - redis
+    restart: always
+
+  # 3. Data Pipeline (Airflow, Python Scripts, Spark 등)
+  data-pipeline:
+    build:
+      context: ./data-pipeline
+      dockerfile: Dockerfile
+    environment:
+      - DATABASE_URL=postgres://user:password@db:5432/music_db
+    depends_on:
+      - db
+    restart: always
+
+  # 4. Database (PostgreSQL 등)
+  db:
+    image: postgres:15-alpine
+    environment:
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=music_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: always
+
+  # 5. Cache / Message Broker (Redis)
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    restart: always
+
+volumes:
+  postgres_data:
+  redis_data:
